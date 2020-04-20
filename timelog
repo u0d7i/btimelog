@@ -6,6 +6,11 @@ if [ "$0" = "$BASH_SOURCE" ]; then
     exit
 fi
 
+# by peoples request
+if [ "STYPE" == "darwin"* ]; then
+    echo "err: go get a normal OS"
+fi
+
 # basic time tracker
 
 # autocomplete
