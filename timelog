@@ -7,7 +7,7 @@ if [ "$0" = "$BASH_SOURCE" ]; then
 fi
 
 # by peoples request
-if [ "STYPE" == "darwin"* ]; then
+if [ "$OSTYPE" == "darwin"* ]; then
     echo "err: go get a normal OS"
 fi
 
