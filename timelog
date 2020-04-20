@@ -28,7 +28,7 @@ t(){
     TIME_LOG="${TIME_LOG:-$HOME/.timelog}"
     _DATECMD=date
     # apple
-    if [ "$OSTYPE" == "darwin"* ]; then
+    if echo "$OSTYPE" | grep -q "darwin"; then
         if ! [ -x "$(command -v gdate)" ]; then
             echo "err: install coreutils, or go get a normal OS"
             exit
