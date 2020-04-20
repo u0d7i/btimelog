@@ -6,9 +6,16 @@ if [ "$0" = "$BASH_SOURCE" ]; then
     exit
 fi
 
-# by peoples request
+DATE=date
+
+# apple
 if [ "$OSTYPE" == "darwin"* ]; then
-    echo "err: go get a normal OS"
+    if ! [ -x "$(command -v gdate)" ]; then
+        echo "err: install coreutils, or go get a normal OS"
+        exit
+    else
+        DATE=gdate
+    fi
 fi
 
 # basic time tracker
@@ -71,13 +78,13 @@ t(){
                 RTYPE=${2:-t} # default report type to 't' if not present
                 if [ "$RTYPE" == "t" ];then
                     # today
-                    CMD="grep ^$(date +%F) ${TIME_LOG}"
+                    CMD="grep ^$(${DATE} +%F) ${TIME_LOG}"
                 elif [ "$RTYPE" == "a" ];then
                     # all
                     CMD="cat ${TIME_LOG}"
                 elif [ "$RTYPE" == "y" ];then
                     #yesterday
-                     CMD="grep ^$(date -d yesterday +%F) ${TIME_LOG}"
+                     CMD="grep ^$(${DATE} -d yesterday +%F) ${TIME_LOG}"
                 else
                     echo "err: no such report type"
                     return
@@ -87,7 +94,7 @@ t(){
                 do
                     eval $(echo $line | awk -F':- ' '{print "ts=\""$1"\" txt=\""$2"\""}');
                     if [ -n ${ts0+x} ]; then
-                        dur=$(date -u +%H:%M -d @$(( $(date +%s -d "$ts") - $(date +%s -d "$ts0") )))
+                        dur=$(${DATE} -u +%H:%M -d @$(( $(${DATE} +%s -d "$ts") - $(${DATE} +%s -d "$ts0") )))
                     else
                         dur="00:00"
                     fi
@@ -101,13 +108,13 @@ t(){
                     return
                 fi
                 last=$(tail -1 ${TIME_LOG} | awk -F':- ' '{print $1}')
-                now=$(date +"%F %H:%M")
-                dur=$(date -u +%H:%M -d @$(( $(date +%s -d "$now") - $(date +%s -d "$last") )))
+                now=$(${DATE} +"%F %H:%M")
+                dur=$(${DATE} -u +%H:%M -d @$(( $(${DATE} +%s -d "$now") - $(${DATE} +%s -d "$last") )))
                 tail -1 ${TIME_LOG}
                 echo $dur
                 ;;
             *)
-                TS=$(date +"%F %H:%M")
+                TS=$(${DATE} +"%F %H:%M")
                 echo "${TS}:- $*" >> ${TIME_LOG}
                 ;;
         esac
