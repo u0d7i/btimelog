@@ -44,6 +44,10 @@ t(){
                 echo "usage: t t|-t|--time          # report time since last activity"
                 ;;
             l|-l|--last)
+                if [ ! -e ${TIME_LOG} ]; then
+                    echo "err: no time log present yet"
+                    return
+                fi
                 if [ $# -eq 1 ]; then
                     NR=10
                 else
@@ -55,7 +59,10 @@ t(){
                 ${EDITOR:-vi} ${TIME_LOG}
                 ;;
             r|-r|--report)
-                # FIXME - check for the file
+                if [ ! -e ${TIME_LOG} ]; then
+                    echo "err: no time log present yet"
+                    return
+                fi
                 RTYPE=${2:-t} # default report type to 't' if not present
                 if [ "$RTYPE" == "t" ];then
                     # today
@@ -84,6 +91,10 @@ t(){
                 done | tee ${TIME_LOG}.report
                 ;;
             t|-t|--time)
+                if [ ! -e ${TIME_LOG} ]; then
+                    echo "err: no time log present yet"
+                    return
+                fi
                 last=$(tail -1 ${TIME_LOG} | awk -F':- ' '{print $1}')
                 now=$(date +"%F %H:%M")
                 dur=$(date -u +%H:%M -d @$(( $(date +%s -d "$now") - $(date +%s -d "$last") )))
